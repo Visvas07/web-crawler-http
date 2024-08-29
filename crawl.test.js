@@ -1,4 +1,4 @@
-const {normalizeUrl} = require('./crawl.js')
+const {normalizeUrl,getUrlsFromHtml} = require('./crawl.js')
 const {test,expect} = require('@jest/globals')
 
 test('normalizeUrl strip protocol',()=>{
@@ -29,3 +29,59 @@ test('normalizeUrl http',()=>{
     expect(actual).toEqual(expected)
 })
 
+test('getUrlsFromHtml absolute',() => {
+    const inputHTMLBody = `
+    <html>
+    <body>
+        <a href="https://www.visvas-tech.com/path/"> Visvas Website </a>
+    </body>
+    </html>
+    `
+    const inputBaseURL = "https://www.visvas-tech.com/path"
+    const actual = getUrlsFromHtml(inputHTMLBody,inputBaseURL)
+    const expected = ["https://www.visvas-tech.com/path/"]
+    expect(actual).toEqual(expected)
+})
+
+test('getUrlsFromHtml relative',() => {
+    const inputHTMLBody = `
+    <html>
+    <body>
+        <a href="/path/"> Visvas Website </a>
+    </body>
+    </html>
+    `
+    const inputBaseURL = "https://www.visvas-tech.com"
+    const actual = getUrlsFromHtml(inputHTMLBody,inputBaseURL)
+    const expected = ["https://www.visvas-tech.com/path/"]
+    expect(actual).toEqual(expected)
+})
+
+test('getUrlsFromHtml both',() => {
+    const inputHTMLBody = `
+    <html>
+    <body>
+        <a href="/path1/"> Visvas Website </a>
+        <a href="https://www.visvas-tech.com/path2/"> Visvas Website </a>
+    </body>
+    </html>
+    `
+    const inputBaseURL = "https://www.visvas-tech.com"
+    const actual = getUrlsFromHtml(inputHTMLBody,inputBaseURL)
+    const expected = ["https://www.visvas-tech.com/path1/","https://www.visvas-tech.com/path2/"]
+    expect(actual).toEqual(expected)
+})
+
+test('getUrlsFromHtml bad url',() => {
+    const inputHTMLBody = `
+    <html>
+    <body>
+        <a href="invalid"> Visvas Website </a>
+    </body>
+    </html>
+    `
+    const inputBaseURL = "https://www.visvas-tech.com"
+    const actual = getUrlsFromHtml(inputHTMLBody,inputBaseURL)
+    const expected = []
+    expect(actual).toEqual(expected)
+})
