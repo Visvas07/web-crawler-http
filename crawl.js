@@ -46,13 +46,10 @@ function getUrlsFromHtml(htmlBody,baseURL){
     const urls = []
     const dom = new JSDOM(htmlBody)
     const linkElements = dom.window.document.querySelectorAll("a")
-    console.log(linkElements.length)
     for(const linkElement of linkElements){
-       // console.log(linkElement.href)
         if(linkElement.href.slice(0,1) === '/'){
            try{
             const urlString = new URL(`${baseURL}${linkElement.href}`)
-            console.log(urlString.href)
             urls.push(urlString.href)
            }catch(error){
             console.log(`Invalid url :${error.message}`)
@@ -61,14 +58,12 @@ function getUrlsFromHtml(htmlBody,baseURL){
         }else{
             try{
                 const urlString = new URL(linkElement.href)
-                console.log(urlString.href)
                 urls.push(urlString.href)
                }catch(error){
                 console.log(`Invalid url :${error.message}`)
                }
         }
     }
-    console.log(urls.length)
     return urls
 
 }
